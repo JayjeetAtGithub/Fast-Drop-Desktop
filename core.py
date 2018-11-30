@@ -8,6 +8,7 @@ import subprocess
 import os
 import http.server
 import socketserver
+import platform
 
 
 def human(data):
@@ -18,8 +19,9 @@ def create_hotspot():
     """
     Creates a WiFi hotspot
     """
-    os.system("nmcli device wifi hotspot con-name %s ssid %s band bg password %s" %
-              ("my-hotspot", "my-hotspot", "hornykhana"))
+    if platform.system() == 'Linux':
+        os.system("nmcli device wifi hotspot con-name %s ssid %s band bg password %s" %
+                  ("my-hotspot", "my-hotspot", "hornykhana"))
 
 
 def run(PORT=9000, path="/"):
