@@ -1,6 +1,6 @@
 #!/usr/bin/vnv python3
 
-# EasyShare Desktop Server
+# pyP2P Desktop Server
 
 import netifaces as ni
 import socket
