@@ -1,5 +1,3 @@
-#!/usr/bin/vnv python3
-
 # pyP2P Desktop Server
 
 import netifaces as ni
@@ -12,16 +10,19 @@ import platform
 
 
 def human(data):
+    """
+    Decodes byte string.
+    """
     return data.decode("utf-8")
 
 
-def create_hotspot():
+def create_hotspot(password):
     """
-    Creates a WiFi hotspot
+    Creates a WiFi hotspot.
     """
     if platform.system() == 'Linux':
         os.system("nmcli device wifi hotspot con-name %s ssid %s band bg password %s" %
-                  ("my-hotspot", "my-hotspot", "hornykhana"))
+                  ("my-hotspot", "my-hotspot", password))
 
 
 def run(PORT=9000, path="/"):
@@ -35,19 +36,19 @@ def run(PORT=9000, path="/"):
     try:
         server(PORT)
     except KeyboardInterrupt:
-        pass
+        print("Server stopped..")
 
 
 def get_hotspot_ip():
     """
-    Gets the ip address at which the hotspot is started
+    Gets the ip address at which the hotspot is started.
     """
     return ni.ifaddresses('wlp3s0')[ni.AF_INET][0]['addr']
 
 
 def deactivate_hotspot():
     """
-    Closes the hotspot
+    Closes the hotspot.
     """
     os.system("nmcli connection down my-hotspot")
 
@@ -62,9 +63,8 @@ def server(PORT):
             s.listen(1)
         except OSError:
             s.close()
-            deactivate_hotspot()
         conn, addr = s.accept()
-        print('Connected by', addr)
+        print('Connected by ', addr)
         for i in range(100):
             receive_file(conn, i)
 
@@ -86,5 +86,4 @@ def receive_file(conn, i):
     print("File {} recieved successfully".format(i))
 
 
-if __name__ == "__main__":
-    run()
+# run()
