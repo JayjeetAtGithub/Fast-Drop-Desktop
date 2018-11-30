@@ -1,2 +1,2 @@
 # EasyShare
-A p2p  chat app in python
+A p2p file sharing app in python
