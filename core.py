@@ -1,5 +1,7 @@
 #!/usr/bin/vnv python3
 
+# EasyShare Desktop Server
+
 import netifaces as ni
 import socket
 import subprocess
@@ -8,15 +10,19 @@ import http.server
 import socketserver
 
 
+def human(data):
+    return data.decode("utf-8")
+
+
 def create_hotspot():
     """
     Creates a WiFi hotspot
     """
-    return subprocess.run(["nmcli device wifi hotspot con-name %s ssid %s band bg password %s" %
-                           ("my-hotspot", "my-hotspot", "hornykhana")], shell=True).returncode
+    os.system("nmcli device wifi hotspot con-name %s ssid %s band bg password %s" %
+              ("my-hotspot", "my-hotspot", "hornykhana"))
 
 
-def run(PORT=8000, path="/"):
+def run(PORT=9000, path="/"):
     """
     Starts the hotspot and starts a local server on port 8000
     """
@@ -43,15 +49,36 @@ def deactivate_hotspot():
 
 
 def server(PORT):
+    """
+    Starts a socket server and waits to get connections and recieve files
+    """
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.bind((str(get_hotspot_ip()), PORT))
-        s.listen(1)
+        try:
+            s.bind((str(get_hotspot_ip()), PORT))
+            s.listen(1)
+        except OSError:
+            s.close()
+            deactivate_hotspot()
         conn, addr = s.accept()
-        with conn:
-            print('Connected by', addr)
-            while True:
-                data = conn.recv(1024)
-                print(str(data))
+        print('Connected by', addr)
+        receive_file(conn)
+
+
+def receive_file(conn):
+    """
+    Recieves  a file byte by byte
+    """
+    filename = "test.txt"
+    f = open(filename, 'w')
+    print("Receiving data...")
+    while True:
+        data = conn.recv(1024)
+        print(human(data))
+        if human(data) == "close":
+            break
+        f.write(human(data))
+    f.close()
+    print("File recieved successfully")
 
 
 if __name__ == "__main__":
