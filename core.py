@@ -28,12 +28,14 @@ def run(PORT=9000, path="/"):
     """
     Starts the hotspot and starts a local server on port 8000
     """
-    create_hotspot()
+
+    # Hotspot to be turned on only when argument passed
+    # create_hotspot()
     print('Connect to %s' % get_hotspot_ip())
     try:
         server(PORT)
     except KeyboardInterrupt:
-        deactivate_hotspot()
+        pass
 
 
 def get_hotspot_ip():
@@ -63,16 +65,17 @@ def server(PORT):
             deactivate_hotspot()
         conn, addr = s.accept()
         print('Connected by', addr)
-        receive_file(conn)
+        for i in range(100):
+            receive_file(conn, i)
 
 
-def receive_file(conn):
+def receive_file(conn, i):
     """
     Recieves  a file byte by byte
     """
-    filename = "test.txt"
+    filename = "recieved_{}.txt".format(i)
     f = open(filename, 'w')
-    print("Receiving data...")
+    print("Receiving file {}...".format(i))
     while True:
         data = conn.recv(1024)
         print(human(data))
@@ -80,7 +83,7 @@ def receive_file(conn):
             break
         f.write(human(data))
     f.close()
-    print("File recieved successfully")
+    print("File {} recieved successfully".format(i))
 
 
 if __name__ == "__main__":
