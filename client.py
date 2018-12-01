@@ -1,14 +1,14 @@
 # pyP2P Desktop Client
 
 import socket
-
-s = socket.socket()
-host = "10.42.0.1"
-port = 9000
-s.connect((host, port))
+import argparse
+import sys
 
 
 def send():
+    """
+    Send the file in byte chunks to the server
+    """
     filename = str(input("Enter file path :"))
     f = open(filename, 'rb')
     l = f.read(1024)
@@ -20,4 +20,19 @@ def send():
 
 
 if __name__ == "__main__":
-    send()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-host")
+    parser.add_argument("-p")
+    args = parser.parse_args()
+    s = socket.socket()
+    if args.host != None and args.p != None:
+        host = str(args.host)
+        port = int(args.p)
+        s.connect((host, port))
+        try:
+            send()
+        except KeyboardInterrupt:
+            print("Aborting...")
+    else:
+        print("Host/Port not provided")
+        sys.exit(0)
