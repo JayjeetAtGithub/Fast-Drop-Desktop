@@ -1,5 +1,6 @@
 # pyP2P
-A p2p file sharing app in python
+
+A peer to peer file sharing script in python
 
 ### Instructions :
 
