@@ -65,25 +65,23 @@ def server(PORT):
             s.close()
         conn, addr = s.accept()
         print('Connected by ', addr)
-        for i in range(100):
-            receive_file(conn, i)
+        filename = str(input("Enter filename : "))
+        receive_file(conn, filename)
 
 
-def receive_file(conn, i):
+def receive_file(conn, filename):
     """
     Recieves  a file byte by byte
     """
-    filename = "recieved_{}.txt".format(i)
-    f = open(filename, 'w')
-    print("Receiving file {}...".format(i))
-    while True:
+    f = open(filename, 'wb')
+    data = conn.recv(1024)
+    while data:
+        f.write(data)
         data = conn.recv(1024)
-        print(human(data))
-        if human(data) == "close":
-            break
-        f.write(human(data))
     f.close()
-    print("File {} recieved successfully".format(i))
+    print("File {} recieved successfully".format(filename))
 
 
-# run()
+if __name__ == "__main__":
+    run()
+
