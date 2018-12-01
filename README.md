@@ -2,4 +2,5 @@
 A p2p file sharing app in python
 
 ### Instructions :
-`python core.py`
+-`python server.py` 
+-`python client.py`
