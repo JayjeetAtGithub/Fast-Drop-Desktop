@@ -67,7 +67,10 @@ def server(PORT=8000):
         conn, addr = s.accept()
         print("Connected by {} ".format(addr))
         filename = str(input("Enter filename : "))
-        receive_file(conn, filename)
+        try:
+            receive_file(conn, filename)
+        except Exception:
+            s.close()
 
 
 def receive_file(conn, filename):
