@@ -1,13 +1,21 @@
 # pyP2P Desktop Server
 
-import netifaces as ni
 import socket
 import subprocess
 import os
-import http.server
-import socketserver
 import platform
 import argparse
+import fcntl
+import struct
+
+
+def get_ip_address(ifname):
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    return socket.inet_ntoa(fcntl.ioctl(
+        s.fileno(),
+        0x8915,  # SIOCGIFADDR
+        struct.pack('256s', ifname[:15])
+    )[20:24])
 
 
 def human(data):
@@ -15,15 +23,6 @@ def human(data):
     Decodes byte string.
     """
     return data.decode("utf-8")
-
-
-def create_hotspot(password):
-    """
-    Creates a WiFi hotspot.
-    """
-    if platform.system() == 'Linux':
-        os.system("nmcli device wifi hotspot con-name %s ssid %s band bg password %s" %
-                  ("my-hotspot", "my-hotspot", password))
 
 
 def run(PORT=9000):
@@ -44,33 +43,26 @@ def get_hotspot_ip():
     """
     Gets the ip address at which the hotspot is started.
     """
-    return ni.ifaddresses('wlp3s0')[ni.AF_INET][0]['addr']
-
-
-def deactivate_hotspot():
-    """
-    Closes the hotspot.
-    """
-    os.system("nmcli connection down my-hotspot")
+    return get_ip_address("wlp3s0")
 
 
 def server(PORT=8000):
     """
     Starts a socket server and waits to get connections and recieve files
     """
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        try:
-            s.bind((str(get_hotspot_ip()), PORT))
-            s.listen(1)
-        except OSError:
-            s.close()
-        conn, addr = s.accept()
-        print("Connected by {} ".format(addr))
-        filename = str(input("Enter filename : "))
-        try:
-            receive_file(conn, filename)
-        except Exception:
-            s.close()
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    try:
+        s.bind((str(get_hotspot_ip()), PORT))
+        s.listen(1)
+    except OSError:
+        s.close()
+    conn, addr = s.accept()
+    print("Connected by {} ".format(addr))
+    filename = str(raw_input("Enter filename : "))
+    try:
+        receive_file(conn, filename)
+    except Exception:
+        s.close()
 
 
 def receive_file(conn, filename):
@@ -94,5 +86,4 @@ if __name__ == "__main__":
         run(int(args.p))
     else:
         run()
-
 
