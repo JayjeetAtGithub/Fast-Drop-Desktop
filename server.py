@@ -7,12 +7,20 @@ import platform
 import argparse
 import fcntl
 import struct
+import pyqrcode
 
 
 class Colors:
     OK = '\033[92m[+]\033[0m'
     INFO = '\033[93m[!]\033[0m'
     BAD = '\033[91m[-]\033[0m'
+
+
+def render_qr_code(addr):
+    url = pyqrcode.create(str(addr))
+    url.svg("addr.svg", scale=8)
+    url.eps("addr.eps", scale=2)
+    print(url.terminal(quiet_zone=1))
 
 
 def get_ip_address(ifname):
@@ -40,11 +48,11 @@ def run(PORT=9000):
     """
     Starts the hotspot and starts a local server on port 8000
     """
-
-    # Hotspot to be turned on only when argument passed
-    # create_hotspot()
-    print('{} Connect to {}:{}'.format(Colors.OK, get_hotspot_ip(), PORT))
     try:
+        print('{} Connect to {}:{}\n\n'.format(
+            Colors.OK, get_hotspot_ip(), PORT))
+        print('Scan the QR Code from mobile to connect')
+        render_qr_code("{}:{}".format(get_hotspot_ip(), PORT))
         server(PORT)
     except KeyboardInterrupt:
         print("{} Server stopped..".format(Colors.BAD))
@@ -110,3 +118,4 @@ if __name__ == "__main__":
         run(int(args.p))
     else:
         run()
+
