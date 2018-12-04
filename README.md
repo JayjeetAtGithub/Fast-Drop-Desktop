@@ -1,6 +1,6 @@
 # pyP2P
 
-A peer to peer file sharing script in python
+A peer to peer file sharing app in python. This is the desktop client
 
 ### Running Instructions :
 
@@ -13,3 +13,6 @@ A peer to peer file sharing script in python
 - `python client.py -host 127.0.0.1 -p 9000`
 
 
+### Screenshots :
+
+<img src="https://github.com/JayjeetAtGithub/pyP2P/blob/master/screenshots/sc1.png" alt="Screenshot">
