@@ -1,0 +1,14 @@
+altgraph==0.16.1
+dis3==0.1.2
+future==0.17.1
+macholib==1.11
+netifaces==0.10.7
+pefile==2018.8.8
+Pillow==5.3.0
+pkg-resources==0.0.0
+PyInstaller==3.4
+pymaging==0.1
+pymaging-png==0.1
+PyQRCode==1.2.1
+qrcode==6.0
+six==1.11.0
