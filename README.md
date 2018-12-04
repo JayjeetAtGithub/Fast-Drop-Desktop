@@ -6,7 +6,7 @@ A peer to peer file sharing app in python. This is the desktop client for it.
 
 * Make sure you are using python2.7
 
-* This will start the server on 8000
+* This will start the server on port 8000 as supplied by user
 ```
 python server.py -p 8000
 ```
