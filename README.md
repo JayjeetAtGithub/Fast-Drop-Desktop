@@ -1,4 +1,4 @@
-<img src="https://github.com/JayjeetAtGithub/pyP2P/blob/master/screenshots/logo_transparent.png" width="100%" height="200px" alt="Screenshot">
+<img src="https://github.com/JayjeetAtGithub/pyP2P/blob/master/screenshots/logo_transparent.png" width="100%" height="500px" alt="Screenshot">
 
 A peer to peer file sharing app in python. This is the desktop client
 
