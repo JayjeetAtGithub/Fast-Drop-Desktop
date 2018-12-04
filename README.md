@@ -4,13 +4,17 @@ A peer to peer file sharing app in python. This is the desktop client
 
 ### Running Instructions :
 
-- `virtualenv --python=/usr/bin/python3 venv` and `source venv/bin/activate`
+* Make sure you are using python2.7
 
-- `pip install -r requirements.txt`
+* This will start the server on 8000
+```
+python server.py -p 8000
+```
 
-- `python server.py -p 9000` or `python server.py`
-
-- `python client.py -host 127.0.0.1 -p 9000`
+* This is will start the server on default port 9000
+```
+python server.py
+```
 
 
 ### Screenshots :
