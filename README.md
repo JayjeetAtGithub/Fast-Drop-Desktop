@@ -1,4 +1,4 @@
-# pyP2P
+<img src="https://github.com/JayjeetAtGithub/pyP2P/blob/master/screenshots/logo_transparent.png" alt="Screenshot">
 
 A peer to peer file sharing app in python. This is the desktop client
 
