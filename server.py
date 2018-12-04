@@ -9,6 +9,12 @@ import fcntl
 import struct
 
 
+class Colors:
+    OK = '\033[92m[+]\033[0m'
+    INFO = '\033[93m[!]\033[0m'
+    BAD = '\033[91m[-]\033[0m'
+
+
 def get_ip_address(ifname):
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     return socket.inet_ntoa(fcntl.ioctl(
@@ -32,11 +38,11 @@ def run(PORT=9000):
 
     # Hotspot to be turned on only when argument passed
     # create_hotspot()
-    print('Connect to {}:{}'.format(get_hotspot_ip(), PORT))
+    print('{} Connect to {}:{}'.format(Colors.OK, get_hotspot_ip(), PORT))
     try:
         server(PORT)
     except KeyboardInterrupt:
-        print("Server stopped..")
+        print("{} Server stopped..".format(Colors.BAD))
 
 
 def get_hotspot_ip():
@@ -57,7 +63,7 @@ def server(PORT=8000):
     except OSError:
         s.close()
     conn, addr = s.accept()
-    print("Connected by {} ".format(addr))
+    print("{} Connected by {} ".format(Colors.INFO, addr))
     filename = str(raw_input("Enter filename : "))
     try:
         receive_file(conn, filename)
@@ -75,10 +81,22 @@ def receive_file(conn, filename):
         f.write(data)
         data = conn.recv(1024)
     f.close()
-    print("File {} recieved successfully".format(filename))
+    print("{} File {} recieved successfully".format(Colors.INFO, filename))
 
 
 if __name__ == "__main__":
+
+    art = """
+                     ____ ___   ____ 
+        ____  __  __/ __ \__ \ / __ )
+       / __ \/ / / / /_/ /_/ // /_/ /
+      / /_/ / /_/ / ____/ __// ____/ 
+     / .___/\__, /_/   /____/_/      
+    /_/    /____/                    
+
+
+    """
+    print(art)
     parser = argparse.ArgumentParser()
     parser.add_argument("-p")
     args = parser.parse_args()
@@ -86,4 +104,3 @@ if __name__ == "__main__":
         run(int(args.p))
     else:
         run()
-
