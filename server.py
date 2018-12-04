@@ -24,6 +24,11 @@ def get_ip_address(ifname):
     )[20:24])
 
 
+def create_downloads_folder():
+    if not os.path.exists("downloads"):
+        os.mkdir("downloads")
+
+
 def human(data):
     """
     Decodes byte string.
@@ -97,6 +102,7 @@ if __name__ == "__main__":
 
     """
     print("\033[93m {}\033[00m" .format(art))
+    create_downloads_folder()
     parser = argparse.ArgumentParser()
     parser.add_argument("-p")
     args = parser.parse_args()
