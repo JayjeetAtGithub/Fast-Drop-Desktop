@@ -96,7 +96,7 @@ if __name__ == "__main__":
 
 
     """
-    print(art)
+    print("\033[93m {}\033[00m" .format(art))
     parser = argparse.ArgumentParser()
     parser.add_argument("-p")
     args = parser.parse_args()
