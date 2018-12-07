@@ -1,22 +1,23 @@
-# pyP2P Desktop Server
-
 import socket
 import subprocess
 import os
 import platform
 import argparse
-import fcntl
-import struct
 import pyqrcode
+import netifaces
 
 
 class Colors:
+    """Color definations
+    """
     OK = '\033[92m[+]\033[0m'
     INFO = '\033[93m[!]\033[0m'
     BAD = '\033[91m[-]\033[0m'
 
 
 def render_qr_code(addr):
+    """Generates a QR Code for the IP address and displays it on the terminal
+    """
     url = pyqrcode.create(str(addr))
     url.svg("addr.svg", scale=8)
     url.eps("addr.eps", scale=2)
@@ -24,29 +25,28 @@ def render_qr_code(addr):
 
 
 def get_ip_address(ifname):
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    return socket.inet_ntoa(fcntl.ioctl(
-        s.fileno(),
-        0x8915,  # SIOCGIFADDR
-        struct.pack('256s', ifname[:15])
-    )[20:24])
+    """Returns the ip address of the interface requested
+    """
+    return netifaces.ifaddresses(ifname)[netifaces.AF_INET][0]['addr']
 
 
 def create_downloads_folder():
+    """Creats a folder named `downloads` if not exists
+    """
     if not os.path.exists("downloads"):
         os.mkdir("downloads")
 
 
 def human(data):
     """
-    Decodes byte string.
+    Decodes byte string into human readable format
     """
     return data.decode("utf-8")
 
 
 def run(PORT=9000):
     """
-    Starts the hotspot and starts a local server on port 8000
+    Opens up a socket connection on the port requested
     """
     try:
         print('{} Connect to {}:{}\n\n'.format(
@@ -60,14 +60,14 @@ def run(PORT=9000):
 
 def get_hotspot_ip():
     """
-    Gets the ip address at which the hotspot is started.
+    Gets the ip address of the hotspot
     """
     return get_ip_address("wlp3s0")
 
 
 def server(PORT=8000):
     """
-    Starts a socket server and waits to get connections and recieve files
+    Starts a socket server and waits to get connection and recieve files
     """
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
