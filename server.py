@@ -1,7 +1,5 @@
 import socket
-import subprocess
 import os
-import platform
 import argparse
 import pyqrcode
 import netifaces
@@ -73,7 +71,7 @@ def server(PORT=8000):
         s.close()
     conn, addr = s.accept()
     print("{} Connected by {} ".format(Colors.INFO, addr))
-    filename = str(raw_input("Enter filename : "))
+    filename = str(input("Enter filename : "))
     try:
         receive_file(conn, filename)
     except Exception:
@@ -109,8 +107,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-p")
     args = parser.parse_args()
-    if args.p != None:
+    if args.p is not None:
         run(int(args.p))
     else:
         run()
-
