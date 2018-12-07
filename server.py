@@ -38,15 +38,13 @@ def create_downloads_folder():
 
 
 def human(data):
-    """
-    Decodes byte string into human readable format
+    """Decodes byte string into human readable format
     """
     return data.decode("utf-8")
 
 
 def run(PORT=9000):
-    """
-    Opens up a socket connection on the port requested
+    """Opens up a socket connection on the port requested
     """
     try:
         print('{} Connect to {}:{}\n\n'.format(
@@ -59,15 +57,13 @@ def run(PORT=9000):
 
 
 def get_hotspot_ip():
-    """
-    Gets the ip address of the hotspot
+    """Gets the ip address of the hotspot
     """
     return get_ip_address("wlp3s0")
 
 
 def server(PORT=8000):
-    """
-    Starts a socket server and waits to get connection and recieve files
+    """Starts a socket server and waits to get connection and recieve files
     """
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
@@ -85,8 +81,7 @@ def server(PORT=8000):
 
 
 def receive_file(conn, filename):
-    """
-    Recieves  a file byte by byte
+    """Recieves  a file byte by byte
     """
     f = open("./downloads/{}".format(filename), 'wb')
     data = conn.recv(1024)
