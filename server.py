@@ -1,3 +1,7 @@
+#############################
+##### pyP2P 1.1 (alpha) #####
+#############################
+
 import socket
 import os
 import argparse
@@ -49,7 +53,7 @@ def run(PORT=9000):
             Colors.OK, get_hotspot_ip(), PORT))
         print('Scan the QR Code from mobile to connect')
         render_qr_code("{}:{}".format(get_hotspot_ip(), PORT))
-        server(PORT)
+        handshake(PORT)
     except KeyboardInterrupt:
         print("{} Server stopped..".format(Colors.BAD))
 
@@ -60,7 +64,7 @@ def get_hotspot_ip():
     return get_ip_address("wlp3s0")
 
 
-def server(PORT=8000):
+def handshake(PORT):
     """Starts a socket server and waits to get connection and recieve files
     """
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -71,11 +75,21 @@ def server(PORT=8000):
         s.close()
     conn, addr = s.accept()
     print("{} Connected by {} ".format(Colors.INFO, addr))
-    filename = str(input("Enter filename : "))
-    try:
-        receive_file(conn, filename)
-    except Exception:
-        s.close()
+    dec = int(input("Send or Recieve ? (1/2) "))
+    if dec == 1:
+        filename = "rec"
+        try:
+            receive_file(conn, filename)
+        except Exception:
+            s.close()
+    elif dec == 2:
+        path = str(input("Enter file path : "))
+        try:
+            send_file(conn, path)
+        except Exception:
+            s.close()
+    else:
+        print("{} Sorry ! Wrong Choice".format(Colors.BAD))
 
 
 def receive_file(conn, filename):
@@ -88,6 +102,21 @@ def receive_file(conn, filename):
         data = conn.recv(1024)
     f.close()
     print("{} File {} recieved successfully".format(Colors.INFO, filename))
+
+
+def send_file(conn, filepath):
+    """Sends a file over socket
+    """
+    if os.path.exists(filepath) and os.path.isfile(filepath):
+        f = open(filepath, 'rb')
+        data = f.read(1024)
+        while data:
+            conn.send(data)
+            data = f.read(1024)
+        f.close()
+        print("{} File sent successfully".format(Colors.INFO, filepath))
+    else:
+        print("{} Invalid file path !! Aborting..".format(Colors.BAD))
 
 
 if __name__ == "__main__":
@@ -111,3 +140,4 @@ if __name__ == "__main__":
         run(int(args.p))
     else:
         run()
+
