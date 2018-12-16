@@ -9,12 +9,24 @@ import pyqrcode
 import netifaces
 
 
-class Colors:
+class Logger:
     """Color definations
     """
     OK = '\033[92m[+]\033[0m'
     INFO = '\033[93m[!]\033[0m'
-    BAD = '\033[91m[-]\033[0m'
+    ERROR = '\033[91m[-]\033[0m'
+
+    def success(self, message):
+        print("{} {}".format(Logger.OK, message))
+
+    def info(self, message):
+        print("{} {}".format(Logger.INFO, message))
+
+    def error(self, message):
+        print("{} {}".format(Logger.ERROR, message))
+
+
+logger = Logger()
 
 
 def render_qr_code(addr):
@@ -49,13 +61,12 @@ def run(PORT=9000):
     """Opens up a socket connection on the port requested
     """
     try:
-        print('{} Connect to {}:{}\n\n'.format(
-            Colors.OK, get_hotspot_ip(), PORT))
-        print('Scan the QR Code from mobile to connect')
+        logger.success('Connect to {}:{}'.format(get_hotspot_ip(), PORT))
+        logger.info('Scan the QR Code to connect :)')
         render_qr_code("{}:{}".format(get_hotspot_ip(), PORT))
         handshake(PORT)
-    except KeyboardInterrupt:
-        print("{} Server stopped..".format(Colors.BAD))
+    except (KeyboardInterrupt, Exception):
+        logger.error("Server stopped !")
 
 
 def get_hotspot_ip():
@@ -74,7 +85,7 @@ def handshake(PORT):
     except OSError:
         s.close()
     conn, addr = s.accept()
-    print("{} Connected by {} ".format(Colors.INFO, addr))
+    logger.info("Connected by {}".format(addr))
     dec = int(input("Send or Recieve ? (1/2) "))
     if dec == 1:
         filename = "rec"
@@ -89,7 +100,7 @@ def handshake(PORT):
         except Exception:
             s.close()
     else:
-        print("{} Sorry ! Wrong Choice".format(Colors.BAD))
+        logger.error("Wrong choice !")
 
 
 def receive_file(conn, filename):
@@ -101,7 +112,7 @@ def receive_file(conn, filename):
         f.write(data)
         data = conn.recv(1024)
     f.close()
-    print("{} File {} recieved successfully".format(Colors.INFO, filename))
+    logger.success("File received successfully !")
 
 
 def send_file(conn, filepath):
@@ -114,9 +125,9 @@ def send_file(conn, filepath):
             conn.send(data)
             data = f.read(1024)
         f.close()
-        print("{} File sent successfully".format(Colors.INFO, filepath))
+        logger.success("File sent successfully !")
     else:
-        print("{} Invalid file path !! Aborting..".format(Colors.BAD))
+        logger.error("Invalid file path !")
 
 
 if __name__ == "__main__":
@@ -140,4 +151,3 @@ if __name__ == "__main__":
         run(int(args.p))
     else:
         run()
-
