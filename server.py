@@ -1,3 +1,7 @@
+#############################
+##### pyP2P 1.1 (alpha) #####
+#############################
+
 import socket
 import os
 import argparse
@@ -5,12 +9,24 @@ import pyqrcode
 import netifaces
 
 
-class Colors:
+class Logger:
     """Color definations
     """
     OK = '\033[92m[+]\033[0m'
     INFO = '\033[93m[!]\033[0m'
-    BAD = '\033[91m[-]\033[0m'
+    ERROR = '\033[91m[-]\033[0m'
+
+    def success(self, message):
+        print("{} {}".format(Logger.OK, message))
+
+    def info(self, message):
+        print("{} {}".format(Logger.INFO, message))
+
+    def error(self, message):
+        print("{} {}".format(Logger.ERROR, message))
+
+
+logger = Logger()
 
 
 def render_qr_code(addr):
@@ -45,13 +61,12 @@ def run(PORT=9000):
     """Opens up a socket connection on the port requested
     """
     try:
-        print('{} Connect to {}:{}\n\n'.format(
-            Colors.OK, get_hotspot_ip(), PORT))
-        print('Scan the QR Code from mobile to connect')
+        logger.success('Connect to {}:{}'.format(get_hotspot_ip(), PORT))
+        logger.info('Scan the QR Code to connect :)')
         render_qr_code("{}:{}".format(get_hotspot_ip(), PORT))
-        server(PORT)
-    except KeyboardInterrupt:
-        print("{} Server stopped..".format(Colors.BAD))
+        handshake(PORT)
+    except (KeyboardInterrupt, Exception):
+        logger.error("Server stopped !")
 
 
 def get_hotspot_ip():
@@ -60,7 +75,7 @@ def get_hotspot_ip():
     return get_ip_address("wlp3s0")
 
 
-def server(PORT=8000):
+def handshake(PORT):
     """Starts a socket server and waits to get connection and recieve files
     """
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -70,12 +85,22 @@ def server(PORT=8000):
     except OSError:
         s.close()
     conn, addr = s.accept()
-    print("{} Connected by {} ".format(Colors.INFO, addr))
-    filename = str(input("Enter filename : "))
-    try:
-        receive_file(conn, filename)
-    except Exception:
-        s.close()
+    logger.info("Connected by {}".format(addr))
+    dec = int(input("Receive or Send ? (1/2) "))
+    if dec == 1:
+        filename = str(input("Enter file name : "))
+        try:
+            receive_file(conn, filename)
+        except Exception:
+            s.close()
+    elif dec == 2:
+        path = str(input("Enter file path : "))
+        try:
+            send_file(conn, path)
+        except Exception:
+            s.close()
+    else:
+        logger.error("Wrong choice !")
 
 
 def receive_file(conn, filename):
@@ -87,7 +112,22 @@ def receive_file(conn, filename):
         f.write(data)
         data = conn.recv(1024)
     f.close()
-    print("{} File {} recieved successfully".format(Colors.INFO, filename))
+    logger.success("File received successfully !")
+
+
+def send_file(conn, filepath):
+    """Sends a file over socket
+    """
+    if os.path.exists(filepath) and os.path.isfile(filepath):
+        f = open(filepath, 'rb')
+        data = f.read(1024)
+        while data:
+            conn.send(data)
+            data = f.read(1024)
+        f.close()
+        logger.success("File sent successfully !")
+    else:
+        logger.error("Invalid file path !")
 
 
 if __name__ == "__main__":
