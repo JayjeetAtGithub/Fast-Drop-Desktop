@@ -86,7 +86,7 @@ def handshake(PORT):
         s.close()
     conn, addr = s.accept()
     logger.info("Connected by {}".format(addr))
-    dec = int(input("Send or Recieve ? (1/2) "))
+    dec = int(input("Receive or Send ? (1/2) "))
     if dec == 1:
         filename = str(input("Enter file name : "))
         try:
