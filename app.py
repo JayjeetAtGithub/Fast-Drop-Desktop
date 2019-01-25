@@ -84,23 +84,24 @@ def handshake(PORT):
         s.listen(1)
     except OSError:
         s.close()
-    conn, addr = s.accept()
-    logger.info("Connected by {}".format(addr))
-    dec = int(input("Receive or Send ? (1/2) "))
-    if dec == 1:
-        filename = str(input("Enter file name : "))
-        try:
-            receive_file(conn, filename)
-        except Exception:
-            s.close()
-    elif dec == 2:
-        path = str(input("Enter file path : "))
-        try:
-            send_file(conn, path)
-        except Exception:
-            s.close()
-    else:
-        logger.error("Wrong choice !")
+    while 1:
+        conn, addr = s.accept()
+        logger.info("Connected by {}".format(addr))
+        dec = int(input("Receive or Send ? (1/2) "))
+        if dec == 1:
+            filename = str(input("Enter file name : "))
+            try:
+                receive_file(conn, filename)
+            except Exception:
+                s.close()
+        elif dec == 2:
+            path = str(input("Enter file path : "))
+            try:
+                send_file(conn, path)
+            except Exception:
+                s.close()
+        else:
+            logger.error("Wrong choice !")
 
 
 def receive_file(conn, filename):
