@@ -1,4 +1,4 @@
-# Air Drop Desktop
+# Fast Drop Desktop
 
 <img width="445" height="400" alt="Screenshot 2019-11-16 at 9 43 24 PM" src="https://user-images.githubusercontent.com/33978990/68995997-47d06380-08ba-11ea-9e63-f2229dba1371.png">
 
