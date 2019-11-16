@@ -6,7 +6,14 @@
 
 * Make sure you are using Python3.6+.
 
-* This will start the server on port 8000 as supplied by user.
+* Clone the repository.
+
+* Install all the dependencies
+```
+pip install -r requirements.txt
+```
+
+* This will start the server on port `8000` as supplied by user.
 ```
 python app.py -p 8000
 ```
