@@ -17,7 +17,7 @@ def render_qr_code(addr):
 
 def create_downloads_folder(path=None):
     """Creates the folder where to save the recieved files.
-    If nothing is provided, `~/Desktop` is used by default.
+    If nothing is provided, `~/Downloads` is used by default.
     """
     if not path:
         path = os.path.join(os.environ['HOME'], 'Downloads')
