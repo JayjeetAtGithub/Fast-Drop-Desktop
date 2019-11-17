@@ -15,24 +15,27 @@ def render_qr_code(addr):
     url.eps("addr.eps", scale=2)
     print(url.terminal(quiet_zone=1))
 
-def create_downloads_folder():
-    """Checks if a `~/Downloads` dir is present. If not
-    it creates one.
+def create_downloads_folder(path=None):
+    """Creates the folder where to save the recieved files.
+    If nothing is provided, `~/Desktop` is used by default.
     """
-    downloads_dir = os.path.join(os.environ['HOME'], 'Downloads')
-    if not os.path.exists(downloads_dir):
-        os.mkdir(downloads_dir)
-    return downloads_dir
+    if not path:
+        path = os.path.join(os.environ['HOME'], 'Downloads')
+    if not os.path.exists(path):
+        os.makedirs(path)
+    return path
 
 def human(data):
     """Decodes byte string into human readable format
     """
     return data.decode("utf-8")
 
-def run(port=9000):
+def run(port=None):
     """Opens up a socket connection on the port requested.
     If no value of port is supplied, port 9000 is used.
     """
+    if not port:
+        port = 9000
     host = get_ip()
     print('Connect to {}:{}'.format(host, port))
     print('Scan the QR Code to connect :)')
@@ -87,7 +90,7 @@ def receive_file(conn, filename):
         f.write(data)
         data = conn.recv(1024)
     f.close()
-    print("File received successfully !")
+    print("File received successfully ! \n")
 
 
 if __name__ == "__main__":
@@ -102,11 +105,10 @@ if __name__ == "__main__":
                                     |_|    
     """
     print("\033[93m {}\033[00m" .format(art))
-    downloads_dir = create_downloads_folder()
     parser = argparse.ArgumentParser()
-    parser.add_argument("-p")
+    parser.add_argument('-p', type=int, help='The port number where to listen.')
+    parser.add_argument('--dir', help='The directory where to save received files.')
     args = parser.parse_args()
-    if args.p is not None:
-        run(int(args.p))
-    else:
-        run()
+    downloads_dir = create_downloads_folder(args.dir)
+    print("Received files will be stored at {}".format(downloads_dir))
+    run(args.p)
