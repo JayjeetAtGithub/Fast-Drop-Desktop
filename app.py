@@ -1,5 +1,6 @@
 import socket
 import os
+import sys
 import argparse
 import pyqrcode
 import netifaces
@@ -37,14 +38,14 @@ def run(port=None):
     if not port:
         port = 9000
     host = get_ip()
-    print('Connect to {}:{}'.format(host, port))
     print('Scan the QR Code to connect :)')
     render_qr_code("{}:{}".format(host, port))
     try:
         connect_and_recv(host, port)
-    except (KeyboardInterrupt, Exception) as e:
-        print(e)
+    except KeyboardInterrupt:
         print("Server stopped !")
+    except Exception as e:
+        print("Error: {}".format(e))
 
 def get_ip():
     """Returns the IP address .
@@ -62,23 +63,20 @@ def connect_and_recv(host, port):
     except Exception:
         s.close()
     while 1:
+        # Accept a connection.
         conn, addr = s.accept()
         try:
-            print("Connected by {}".format(addr))
             filename = str(conn.recv(1024).decode('utf-8')).rstrip('\n')
             print("Receiving : ", filename)
         except Exception as e:
-            print("Could not recv filename !")              
-        finally:
-            conn.close()
+            print("Something went wrong ! Could not recv filename !")
 
-        conn, addr = s.accept()
         try:
             receive_file(conn, filename)
         except Exception as e:
-            print("Could not recv file !")
-        finally:
-            conn.close()
+            print("Something went wrong ! Could not recv file !")
+        # Close the connection.
+        conn.close()
 
 def receive_file(conn, filename):
     """Recieves  a file byte by byte over
